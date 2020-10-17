@@ -127,7 +127,7 @@ if __name__ == '__main__':
     #Push model to the repository
     try:
         pickle.dump(model, open(model_path, 'wb'))
-        copyfile(model_path, './models/deploy/' + data['model_label'])
+        copyfile(model_path, './models/deploy/' + data['model_label'] + '.pkl')
         repo.git.add(model_path)
         repo.git.add('models/deploy/' + data['model_label'] + '.pkl')
         repo.index.commit('Model ' + data['model_label'] + '/' + str(data['model_version']) + ' with data version: ' + str(data['data_version']))
