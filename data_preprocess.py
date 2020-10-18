@@ -2,6 +2,7 @@ import pandas as pd
 import logging
 import traceback
 import os
+import sys
 from git import Repo
 
 if __name__ == '__main__':
@@ -27,7 +28,7 @@ if __name__ == '__main__':
         data_logger.error('Could not open repository')
         data_logger.error(traceback.format_exc())
         print('Could not open repository. Please check log')
-        exit()
+        sys.exit(-1)
 
 
     #Pre-process data according to solution
@@ -57,7 +58,7 @@ if __name__ == '__main__':
         print("Error while processing data. Please check log")
         data_logger.error("Error while processing data")
         data_logger.error(traceback.format_exc())
-        exit()
+        sys.exit(-1)
 
 
     #Upload to git
@@ -87,4 +88,6 @@ if __name__ == '__main__':
         data_logger.error('Could not update git repository.')
         data_logger.error(traceback.format_exc())
         print('Could not update git repository. Please check log.')
-        exit()
+        sys.exit(-1)
+
+    sys.exit(0)

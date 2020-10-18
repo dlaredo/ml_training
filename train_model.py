@@ -4,6 +4,7 @@ import pickle
 import logging
 import traceback
 import sklearn
+import sys
 import pandas as pd
 from git import Repo
 from shutil import copyfile
@@ -50,6 +51,7 @@ if __name__ == '__main__':
         training_logger.error('Could not open config file')
         training_logger.error(traceback.format_exc())
         print('Could not open config file. Please check log')
+        sys.exit(-1)
 
     #Try to open repository
     try:
@@ -58,6 +60,7 @@ if __name__ == '__main__':
         training_logger.error('Could not open repository')
         training_logger.error(traceback.format_exc())
         print('Could not open repository. Please check log')
+        sys.exit(-1)
 
     #Load model
     try:
@@ -78,7 +81,7 @@ if __name__ == '__main__':
         training_logger.error('Could not open file of the model')
         training_logger.error(traceback.format_exc())
         print('Could not open file of the model. Please check log')
-        exit()
+        sys.exit(-1)
 
 
     #Load data
@@ -105,7 +108,7 @@ if __name__ == '__main__':
         training_logger.error('Could not load data')
         training_logger.error(traceback.format_exc())
         print('Could not load data. Please check log')
-        exit()
+        sys.exit(-1)
 
 
     #Train model
@@ -122,7 +125,7 @@ if __name__ == '__main__':
         training_logger.error('Could not train model')
         training_logger.error(traceback.format_exc())
         print('Could not train model. Please check log')
-        exit()
+        sys.exit(-1)
 
 
     #Push model to the repository
@@ -142,6 +145,8 @@ if __name__ == '__main__':
         training_logger.error('Could not update git repository')
         training_logger.error(traceback.format_exc())
         print('Could not update git repository. Please check log')
-        exit()
+        sys.exit(-1)
+
+    sys.exit(0)
 
 
