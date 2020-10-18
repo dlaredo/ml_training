@@ -7,7 +7,7 @@ from git import Repo
 if __name__ == '__main__':
 
     #repo_path = r"/Users/davidlaredorazo/Documents/Projects/Rappi Challenge/models_and_data"
-    repo_path = r"usr/src/app"
+    repo_path = r"/usr/src/app/models_and_data"
     file_exists = False
 
     #Configure logger
@@ -27,6 +27,7 @@ if __name__ == '__main__':
         data_logger.error('Could not open repository')
         data_logger.error(traceback.format_exc())
         print('Could not open repository. Please check log')
+        exit()
 
 
     #Pre-process data according to solution

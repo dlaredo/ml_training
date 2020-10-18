@@ -27,7 +27,7 @@ if __name__ == '__main__':
     repo = None
     target_file = None
     #repo_path = r"/Users/davidlaredorazo/Documents/Projects/Rappi Challenge/models_and_data"
-    repo_path = r"usr/src/app"
+    repo_path = r"/usr/src/app/models_and_data"
     model_path = ''
     data_path = ''
     X_train = None
