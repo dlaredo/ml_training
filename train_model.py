@@ -28,7 +28,8 @@ if __name__ == '__main__':
     repo = None
     target_file = None
     #repo_path = r"/Users/davidlaredorazo/Documents/Projects/Rappi Challenge/models_and_data"
-    repo_path = r"/usr/src/app/models_and_data"
+    app_path = r"/usr/src/app"
+    repo_path = app_path + "/models_and_data"
     model_path = ''
     data_path = ''
     X_train = None
@@ -45,7 +46,7 @@ if __name__ == '__main__':
 
     #Open config file
     try:
-        with open('./config.json') as fp:
+        with open(app_path+'/config.json') as fp:
             data = json.load(fp)
     except Exception as e:
         training_logger.error('Could not open config file')

@@ -8,7 +8,8 @@ from git import Repo
 if __name__ == '__main__':
 
     #repo_path = r"/Users/davidlaredorazo/Documents/Projects/Rappi Challenge/models_and_data"
-    repo_path = r"/usr/src/app/models_and_data"
+    app_path = r"/usr/src/app"
+    repo_path = app_path + "/models_and_data"
     file_exists = False
 
     #Configure logger
