@@ -26,7 +26,8 @@ if __name__ == '__main__':
     model = None
     repo = None
     target_file = None
-    repo_path = r"/Users/davidlaredorazo/Documents/Projects/Rappi Challenge/ml_training"
+    #repo_path = r"/Users/davidlaredorazo/Documents/Projects/Rappi Challenge/models_and_data"
+    repo_path = r"usr/src/app"
     model_path = ''
     data_path = ''
     X_train = None
@@ -43,7 +44,7 @@ if __name__ == '__main__':
 
     #Open config file
     try:
-        with open('config.json') as fp:
+        with open('./config.json') as fp:
             data = json.load(fp)
     except Exception as e:
         training_logger.error('Could not open config file')
@@ -61,7 +62,7 @@ if __name__ == '__main__':
     #Load model
     try:
 
-        model_path = './models' + '/' + data['model_label'] + '.pkl'
+        model_path = 'models' + '/' + data['model_label'] + '.pkl'
 
         if data['model_version']:
             commit = repo.commit(data['model_version'])
@@ -92,7 +93,7 @@ if __name__ == '__main__':
             with io.BytesIO(target_file.data_stream.read()) as f:
                 titanic_data = pd.read_csv(data_path)
         else:
-            titanic_data = pd.read_csv(data_path)
+            titanic_data = pd.read_csv(repo_path + '/' + data_path)
             data['data_version'] = repo.commit()
 
         X_all = titanic_data.drop('Survived', axis=1)
@@ -126,12 +127,12 @@ if __name__ == '__main__':
 
     #Push model to the repository
     try:
-        pickle.dump(model, open(model_path, 'wb'))
-        copyfile(model_path, './models/deploy/' + data['model_label'] + '.pkl')
+        pickle.dump(model, open(repo_path + '/' + model_path, 'wb'))
+        copyfile(repo_path + '/' + model_path, repo_path + '/' + 'models/deploy/' + data['model_label'] + '.pkl')
         repo.git.add(model_path)
         repo.git.add('models/deploy/' + data['model_label'] + '.pkl')
         repo.index.commit('Model ' + data['model_label'] + '/' + str(data['model_version']) + ' with data version: ' + str(data['data_version']))
-        origin = repo.remote(name='ml_training')
+        origin = repo.remote(name='origin')
         origin.push()
         training_logger.info('Model uploaded to git')
         print('Model uploaded to git')

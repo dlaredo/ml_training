@@ -1,25 +1,38 @@
-import numpy as np
 import pandas as pd
 import logging
 import traceback
-import warnings
-from collections import Counter
+import os
+from git import Repo
 
 if __name__ == '__main__':
+
+    #repo_path = r"/Users/davidlaredorazo/Documents/Projects/Rappi Challenge/models_and_data"
+    repo_path = r"usr/src/app"
+    file_exists = False
 
     #Configure logger
     data_logger = logging.getLogger('data_logger')
     data_logger.setLevel(logging.INFO)
-    data_fh = logging.FileHandler('data.log')
+    data_fh = logging.FileHandler('./data.log')
     data_formatter = logging.Formatter(fmt='%(levelname)s:%(threadName)s:%(asctime)s:%(filename)s:%(funcName)s:%(message)s',
                                     datefmt='%m/%d/%Y %H:%M:%S')
     data_fh.setFormatter(data_formatter)
     data_logger.addHandler(data_fh)
 
+
+    #Try to open repository
+    try:
+        repo = Repo(repo_path)
+    except Exception as e:
+        data_logger.error('Could not open repository')
+        data_logger.error(traceback.format_exc())
+        print('Could not open repository. Please check log')
+
+
+    #Pre-process data according to solution
     try:
 
-        #Process data according to solution
-        training = pd.read_csv("data_raw/train.csv")
+        training = pd.read_csv(repo_path + "/data_raw/train.csv")
         training = training.drop(['PassengerId','Name','Ticket','Cabin'], axis=1)
 
         #Fill missing values
@@ -35,10 +48,42 @@ if __name__ == '__main__':
         training = training.drop(['Embarked', 'Sex', 'Pclass'], axis=1)
         titanic = training.join([embark_dummies_titanic, sex_dummies_titanic, pclass_dummies_titanic])
 
-        titanic.to_csv('data/train.csv')
+        data_logger.info('Successfully pre processed data')
+        print("Successfully pre processed data")
 
     except Exception as e:
 
         print("Error while processing data. Please check log")
         data_logger.error("Error while processing data")
         data_logger.error(traceback.format_exc())
+        exit()
+
+
+    #Upload to git
+    try:
+
+        file_exists = os.path.isfile(repo_path + '/data/train.csv')
+        titanic.to_csv(repo_path + '/data/train.csv')
+        t = repo.head.commit.tree
+
+        if repo.git.diff(t) or file_exists is False:
+
+            repo.git.add(repo_path + '/data/train.csv')
+            repo.index.commit('Adding pre-processed data')
+            origin = repo.remote(name='origin')
+            origin.push()
+            data_logger.info('Data uploaded to git')
+            print('Data uploaded to git')
+
+        else:
+
+            print("No changes detected in data.")
+            data_logger.error('No changes detected in data.')
+
+    except Exception as e:
+        #Need to reset git to previous state
+        repo.git.reset('--hard')
+        data_logger.error('Could not update git repository.')
+        data_logger.error(traceback.format_exc())
+        print('Could not update git repository. Please check log.')
+        exit()
