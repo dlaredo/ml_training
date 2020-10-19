@@ -5,35 +5,30 @@ import logging
 import traceback
 import sklearn
 import sys
+import pathlib
+import os
 import pandas as pd
 from git import Repo
 from shutil import copyfile
 from sklearn.metrics import accuracy_score
-"""
-import numpy as np
-import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
-import warnings
-from collections import Counter
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
-from sklearn.svm import LinearSVC
-from sklearn.ensemble import RandomForestClassifier
-"""
+
 
 if __name__ == '__main__':
 
     model = None
     repo = None
     target_file = None
+    app_path = str(pathlib.Path(__file__).parent.absolute())
     #repo_path = r"/Users/davidlaredorazo/Documents/Projects/Rappi Challenge/models_and_data"
-    app_path = r"/usr/src/app"
-    repo_path = app_path + "/models_and_data"
+    #app_path = r"/usr/src/web_app"
+    repo_path = os.path.join(app_path, "../models_and_data")
     model_path = ''
     data_path = ''
     X_train = None
     y_train = None
+
+    print(app_path)
+    print(repo_path)
 
     #Configure logger
     training_logger = logging.getLogger('training_logger')
@@ -46,7 +41,7 @@ if __name__ == '__main__':
 
     #Open config file
     try:
-        with open(app_path+'/config.json') as fp:
+        with open(app_path + '/config.json') as fp:
             data = json.load(fp)
     except Exception as e:
         training_logger.error('Could not open config file')
@@ -98,12 +93,14 @@ if __name__ == '__main__':
                 titanic_data = pd.read_csv(data_path)
         else:
             titanic_data = pd.read_csv(repo_path + '/' + data_path)
-            data['data_version'] = repo.commit()
+            data['data_version'] = 'latest'
 
         X_all = titanic_data.drop('Survived', axis=1)
         y_all = titanic_data.Survived
 
         X_train, y_train = X_all, y_all
+
+        print(X_train)
 
     except Exception as e:
         training_logger.error('Could not load data')

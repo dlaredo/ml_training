@@ -3,13 +3,16 @@ import logging
 import traceback
 import os
 import sys
+import pathlib
 from git import Repo
 
 if __name__ == '__main__':
 
+    app_path = str(pathlib.Path(__file__).parent.absolute())
+    repo_path = os.path.join(app_path, "../models_and_data")
     #repo_path = r"/Users/davidlaredorazo/Documents/Projects/Rappi Challenge/models_and_data"
-    app_path = r"/usr/src/app"
-    repo_path = app_path + "/models_and_data"
+    #app_path = r"/usr/src/web_app"
+    #repo_path = app_path + "/models_and_data"
     file_exists = False
 
     #Configure logger
@@ -43,13 +46,15 @@ if __name__ == '__main__':
         training.Embarked = training.Embarked.fillna('S')
 
         #Transform categorical into integer
-        embark_dummies_titanic  = pd.get_dummies(training['Embarked'])
-        sex_dummies_titanic  = pd.get_dummies(training['Sex'])
-        pclass_dummies_titanic  = pd.get_dummies(training['Pclass'], prefix="Class")
+        embark_dummies_titanic = pd.get_dummies(training['Embarked'])
+        sex_dummies_titanic = pd.get_dummies(training['Sex'])
+        pclass_dummies_titanic = pd.get_dummies(training['Pclass'], prefix="Class")
 
         #Put data together
         training = training.drop(['Embarked', 'Sex', 'Pclass'], axis=1)
         titanic = training.join([embark_dummies_titanic, sex_dummies_titanic, pclass_dummies_titanic])
+
+        print(titanic)
 
         data_logger.info('Successfully pre processed data')
         print("Successfully pre processed data")
@@ -66,7 +71,7 @@ if __name__ == '__main__':
     try:
 
         file_exists = os.path.isfile(repo_path + '/data/train.csv')
-        titanic.to_csv(repo_path + '/data/train.csv')
+        titanic.to_csv(repo_path + '/data/train.csv', index=False)
         t = repo.head.commit.tree
 
         if repo.git.diff(t) or file_exists is False:
