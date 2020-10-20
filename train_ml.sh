@@ -2,8 +2,8 @@
 cd models_and_data
 git pull
 cd ..
-
 cd ml_training
+git pull
 
 KEY=$(jq .preprocess_data config.json)
 
